@@ -33,5 +33,5 @@ It supports a simple Cruise mode for non-racing sailing, and an optional Race mo
   3. Total elapsed time and total distance (nm + km)
 - open the menu and choose **Sailing mode** → **Cruise** or **Race**
 - you can also start the countdown from the menu (**Start timer**) while recording in Race mode
-- while the race countdown is running, page buttons adjust the countdown by a minute
+- while the race countdown is running, page buttons snap the countdown to the next / previous 30-second mark
 - a new track lap is created every time the race countdown reaches 0

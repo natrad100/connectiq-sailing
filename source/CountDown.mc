@@ -16,6 +16,8 @@ class CountDown {
     var timerComplete = false;
     var timerRunning = false;
 
+    const SYNC_STEP_SECONDS = 30;
+
     // Properties
     var secLeft;
     var finalRingTime = 5000;
@@ -190,7 +192,7 @@ class CountDown {
         if (timerRunning == false) {
             return;
         }
-        secLeft = ((secLeft / 60) + 1) * 60;
+        secLeft = ((secLeft / SYNC_STEP_SECONDS) + 1) * SYNC_STEP_SECONDS;
         ring(BUZZ_SHORT, 1, false);
         Ui.requestUpdate();
     }
@@ -199,7 +201,7 @@ class CountDown {
         if (timerRunning == false) {
             return;
         }
-        secLeft = (secLeft / 60) * 60;
+        secLeft = (secLeft / SYNC_STEP_SECONDS) * SYNC_STEP_SECONDS;
         ring(BUZZ_SHORT, 1, false);
         Ui.requestUpdate();
     }
