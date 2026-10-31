@@ -35,6 +35,8 @@ class SailingView extends Ui.View {
     // Data
     var speedFloat = 0.0;
     var accuracy = Position.QUALITY_NOT_AVAILABLE;
+    var gpsMoment = null;
+    var gpsMomentTick = 0;
     var page = 0;
 
     // Constants
@@ -74,6 +76,18 @@ class SailingView extends Ui.View {
             ringThickness = 4;
         }
         ringRadius = (minDim / 2) - (ringThickness / 2);
+    }
+
+    //! Time of day from the last GPS fix, advanced by the time since it arrived.
+    //! Falls back to the watch clock until a fix has been received.
+    function gpsTimeStr() {
+        var moment = Time.now();
+        if (gpsMoment != null) {
+            moment = gpsMoment.add(new Time.Duration((Sys.getTimer() - gpsMomentTick) / 1000));
+        }
+        var info = Time.Gregorian.info(moment, Time.FORMAT_MEDIUM);
+        return Lang.format("$1$:$2$:$3$",
+            [info.hour.format("%02d"), info.min.format("%02d"), info.sec.format("%02d")]);
     }
 
     function updateTimer() {
@@ -533,6 +547,7 @@ class SailingView extends Ui.View {
             drawCountdownRing(dc);
             dc.setColor( Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT );
             dc.drawText( centerX, centerY - (Gfx.getFontHeight(Gfx.FONT_NUMBER_THAI_HOT) / 2), Gfx.FONT_NUMBER_THAI_HOT, countDownStr, Gfx.TEXT_JUSTIFY_CENTER );
+            dc.drawText( centerX, centerY + (Gfx.getFontHeight(Gfx.FONT_NUMBER_THAI_HOT) / 2) + 2, Gfx.FONT_SMALL, gpsTimeStr(), Gfx.TEXT_JUSTIFY_CENTER );
 
         } else if (countdownObj != null && countdownObj.isTimerComplete()) {
             dc.setColor( Gfx.COLOR_WHITE, Gfx.COLOR_BLACK );
@@ -565,6 +580,11 @@ class SailingView extends Ui.View {
     function onPosition(info) {
         if (info == null) {
             return;
+        }
+
+        if ((info has :when) && (info.when != null)) {
+            gpsMoment = info.when;
+            gpsMomentTick = Sys.getTimer();
         }
 
         if (info.accuracy != null) {
